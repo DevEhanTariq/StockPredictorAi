@@ -9,3 +9,5 @@
 `pip install pandas`
 - MatPlotLib
 `pip install matplotlib`
+- YFinance
+`pip install yfinance`
