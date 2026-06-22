@@ -11,3 +11,5 @@
 `pip install matplotlib`
 - YFinance
 `pip install yfinance`
+- JSON5
+`pip install json5`
