@@ -1,7 +1,7 @@
-import torch as tt
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
+import torch # Imports PyTorch
+import torch.nn as nn # Imports all functions related to neural networks
+import torch.optim as optim # Defines Optimiser
 
-if __name__ == "__main__":
-    print(tt.__version__)
+import numpy as np # For manipulating data
+import pandas as pd # For manipulating data
+import matplotlib.pyplot as plt # For data visualisation
