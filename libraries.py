@@ -6,7 +6,7 @@ from torch.utils.data import Dataset, DataLoader # Handles training data
 import yfinance as yf # Provides accsess to stock information
 
 import sys # why not
-import json # To handle settings and store training data
+import json5 # To handle settings and store training data
 import numpy as np # For manipulating data
 import pandas as pd # For manipulating data
 import matplotlib.pyplot as plt # For data visualisation
@@ -17,4 +17,5 @@ if __name__ == "__main__":
     print(f"Numpy version: {np.__version__}")
     print(f"Pandas version: {pd.__version__}")
     print(f"YFinance version: {yf.__version__}")
+    print(f"JSON5 version: {json5.__version__}")
 
