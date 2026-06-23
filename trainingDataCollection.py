@@ -1,13 +1,26 @@
 from pandas.core.arrays import period
 from pygments.lexers import json5
+from sympy.integrals.laplace import InverseLaplaceTransform
 
 from libraries import *
 
-def trainingSettings():
-    with open("./Settings/trainingDataSettings.json5", "r") as f:
+def trainingSettings(): # Accesses trainingDataSettings.md
+    with open("./Settings/trainingDataSettings.json5", "r") as f: # Opens the file as read only
         data = json5.load(f)
         permanentStock, period, interval, stockSearchAmount, start, end = data["permanentStock"], data["period"], data["interval"], data["stockSearchAmount"], data["start"], data["end"]
-        return (period, interval, stockSearchAmount, start, end, permanentStock)
+        return (period, interval, stockSearchAmount, start, end, permanentStock) # Returns all settings
+
+def EMACalc(closingPrices: list, dayLength: int): # Calculates the EMA, given some parameters
+    EMA = []
+    alpha = 2/(dayLength + 1) # Finds the alpha
+    Ialpha = 1-alpha # Finds what 1 - alpha is
+    for i in range(len(closingPrices)): # Loops through all closing prices
+        if i == 0: # If it is the loops first iteration, it appends the same value
+            EMA.append(closingPrices[i])
+        else: # Else is calculates EMA
+            currentEMA = (closingPrices[i]*alpha) + (EMA[-1]*Ialpha)
+            EMA.append(currentEMA)
+    return EMA # Returns the EMA
 
 class trainingDataCollection:
     def __init__(self):
@@ -50,6 +63,7 @@ class trainingDataCollection:
         stockSearchAmount = ts[2]
         start = ts[3]
         end = ts[4]
+
         for validTicker in self.validTickers: # Loops through all valid tickers
             if showStocks:
                 print(validTicker) # Shows what Stock the loops on
@@ -59,6 +73,7 @@ class trainingDataCollection:
             else:
                 data = ticker.history(interval=interval, start=start, end=end)
             self.data[validTicker] = {}
+
             open = []
             close = []
             for od in order: # Loops through the order of the Stocks
@@ -66,15 +81,29 @@ class trainingDataCollection:
                     if column == od: # Checks if its in the correct order
                         self.data[validTicker][column] = data[column].tolist() # Adds it to the dict
                         if od == "Open":
-                            open.append(data[column].tolist())
+                            open = (data[column].tolist())
                         elif od == "Close":
-                            close.append(data[column].tolist())
+                            close = (data[column].tolist())
+
             percenteIncrease = []
-            for i in range(len(open)):
-                for j in range(len(open[i])):
-                    percent = float(close[i][j]) / float(open[i][j])
-                    percenteIncrease.append(percent)
+            for j in range(len(open)):
+                percent = float(close[j]) / float(open[j]) # Calculates percentage increase
+                percenteIncrease.append(percent)
             self.data[validTicker]["PercentIncrease"] = percenteIncrease
+
+            EMA_5 = EMACalc(close, 5)
+            EMA_9 = EMACalc(close, 9)
+            EMA_10 = EMACalc(close, 10)
+            EMA_20 = EMACalc(close, 20)
+            EMA_50 = EMACalc(close, 50)
+            EMA_200 = EMACalc(close, 200)
+
+            self.data[validTicker]["EMA_5"] = EMA_5
+            self.data[validTicker]["EMA_9"] = EMA_9
+            self.data[validTicker]["EMA_10"] = EMA_10
+            self.data[validTicker]["EMA_20"] = EMA_20
+            self.data[validTicker]["EMA_50"] = EMA_50
+            self.data[validTicker]["EMA_200"] = EMA_200
 
     def saveTrainingData(self): # Saves self.data to json5
         data = self.data
