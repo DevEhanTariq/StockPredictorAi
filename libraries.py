@@ -11,9 +11,11 @@ import json5 # To handle settings and store training data
 import numpy as np # For manipulating data
 import pandas as pd # For manipulating data
 import matplotlib.pyplot as plt # For data visualisation
+import math # For Sigmoid functions
 
 from trainingDataCollection import createTrainingData, trainingSettings # For creating data and reading settings
 from trainingDataBatching import batchTrainingData
+from batchesToXYTensors import splitBatchesToXYTensors
 
 if __name__ == "__main__":
     print(f"sys version: {sys.version}")
