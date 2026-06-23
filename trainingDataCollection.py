@@ -1,5 +1,3 @@
-from os import write
-
 from pandas.core.arrays import period
 from pygments.lexers import json5
 
@@ -8,8 +6,8 @@ from libraries import *
 def trainingSettings():
     with open("./Settings/trainingDataSettings.json5", "r") as f:
         data = json5.load(f)
-        period, interval, stockSearchAmount, start, end = data["period"], data["interval"], data["stockSearchAmount"], data["start"], data["end"]
-        return (period, interval, stockSearchAmount, start, end)
+        permanentStock, period, interval, stockSearchAmount, start, end = data["permanentStock"], data["period"], data["interval"], data["stockSearchAmount"], data["start"], data["end"]
+        return (period, interval, stockSearchAmount, start, end, permanentStock)
 
 class trainingDataCollection:
     def __init__(self):
@@ -31,6 +29,8 @@ class trainingDataCollection:
     def checkValidTickers(self, showStocks: bool=False, progressCheck: bool=False): # Checks if all tickers are in Yahoo Finance
         ts = trainingSettings()
         searchLength = ts[2]
+        ts = trainingSettings()
+        self.validTickers += ts[-1]
         for t in self.tickers[:searchLength]:  # Loops through all tickers and checks if they are in Yahoo Finance
             if  showStocks:
                 print(t)
@@ -43,7 +43,7 @@ class trainingDataCollection:
             print(self.validTickers)
 
     def compileTrainingData(self, showStocks: bool=False): # Saves all data in a dictionary
-        order = ["Open", "High", "Low", "Close", "Volume", "Dividends", "Stock Splits"] # The order the stock values are saved
+        order = ["Open", "Close", "High", "Low", "Volume", "Dividends", "Stock Splits"] # The order the stock values are saved
         ts = trainingSettings()
         period = ts[0]
         interval = ts[1]

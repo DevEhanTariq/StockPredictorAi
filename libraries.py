@@ -5,6 +5,7 @@ from torch.utils.data import Dataset, DataLoader # Handles training data
 
 import yfinance as yf # Provides accsess to stock information
 
+from os import write
 import sys # why not
 import json5 # To handle settings and store training data
 import numpy as np # For manipulating data
