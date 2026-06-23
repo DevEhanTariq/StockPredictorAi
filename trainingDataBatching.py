@@ -45,21 +45,28 @@ class trainingDataBatching: # Batches all training data into questions and answe
         if showProgress:
             print(self.stockParameters)
 
-def batchTrainingData(showProgress: bool = False, createTrainingData: bool = True):
+    def saveBatches(self):
+        with open("./TrainingData/stockBatchesData.json5", "w") as f:  # Opens stockBatchesData.json5
+            json5.dump(self.batches, f, indent=4)
+
+def batchTrainingData(showProgress: bool = False, createData: bool = True):
     if showProgress:
-        if createTrainingData:
+        if createData:
             createTrainingData(showProgress=showProgress)
         print("Loading training data...")
         tdb = trainingDataBatching()
         tdb.loadStockData(showProgress=showProgress)
         print("Creating batches...")
         tdb.createBatches(showProgress=showProgress)
+        print("Saving batches...")
+        tdb.saveBatches()
     else:
-        if createTrainingData:
+        if createData:
             createTrainingData(showProgress=showProgress)
         tdb = trainingDataBatching()
         tdb.loadStockData(showProgress=showProgress)
         tdb.createBatches(showProgress=showProgress)
+        tdb.saveBatches()
 
 if __name__ == "__main__":
-    batchTrainingData(showProgress=True, createTrainingData=True)
+    batchTrainingData(showProgress=True, createData=True)
