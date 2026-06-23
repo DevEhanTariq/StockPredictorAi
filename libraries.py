@@ -12,6 +12,8 @@ import numpy as np # For manipulating data
 import pandas as pd # For manipulating data
 import matplotlib.pyplot as plt # For data visualisation
 
+from trainingDataCollection import createTrainingData # For creating data
+
 if __name__ == "__main__":
     print(f"sys version: {sys.version}")
     print(f"Torch version: {torch.__version__}")

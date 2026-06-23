@@ -1,5 +1,5 @@
 {
-  "period": "1mo", // All possible values -> ["1d", "5d", "1mo", "3mo", "6mo", "1y", "2y", "5y", "10y", "ytd", "max"]
+  "period": "1y", // All possible values -> ["1d", "5d", "1mo", "3mo", "6mo", "1y", "2y", "5y", "10y", "ytd", "max"]
   "interval": "1d", // All possible values -> ["1d", "5d", "1wk", "1mo", "3mo"]
   "start": null, // Inclusive; If this is empty (null), it will be ignored and "period" will be used instead; example input -> "2024-01-01", "yyyy-mm-dd"
   "end": null, // Exclusive; If this is empty (null), it will be ignored and "period" will be used instead example input -> "2025-01-01", "yyyy-mm-dd"
