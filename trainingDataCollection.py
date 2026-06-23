@@ -1,5 +1,6 @@
 from os import write
 
+from pandas.core.arrays import period
 from pygments.lexers import json5
 
 from libraries import *
@@ -7,9 +8,8 @@ from libraries import *
 def trainingSettings():
     with open("./Settings/trainingDataSettings.json5", "r") as f:
         data = json5.load(f)
-        period = data["period"] # How long the data extends back in time
-        stockSearchAmount = data["stockSearchAmount"] # How many stocks to search
-        return (period, stockSearchAmount)
+        period, interval, stockSearchAmount, start, end = data["period"], data["interval"], data["stockSearchAmount"], data["start"], data["end"]
+        return (period, interval, stockSearchAmount, start, end)
 
 class trainingDataCollection:
     def __init__(self):
@@ -30,7 +30,7 @@ class trainingDataCollection:
 
     def checkValidTickers(self, showStocks: bool=False, progressCheck: bool=False): # Checks if all tickers are in Yahoo Finance
         ts = trainingSettings()
-        searchLength = ts[1]
+        searchLength = ts[2]
         for t in self.tickers[:searchLength]:  # Loops through all tickers and checks if they are in Yahoo Finance
             if  showStocks:
                 print(t)
@@ -42,33 +42,51 @@ class trainingDataCollection:
         if showStocks:
             print(self.validTickers)
 
-    def compileTrainingData(self, progressCheck: bool=False): # Saves all data in a dictionary
+    def compileTrainingData(self, showStocks: bool=False): # Saves all data in a dictionary
+        order = ["Open", "High", "Low", "Close", "Volume", "Dividends", "Stock Splits"] # The order the stock values are saved
         ts = trainingSettings()
-        periodTime: str = ts[0]
-
-        validTickerString: str = ""
-        for i in range(len(self.validTickers)): # Creates a string containing all valid tickers
-            if self.validTickers[i] == self.validTickers[-1]:
-                validTickerString += self.validTickers[i]
+        period = ts[0]
+        interval = ts[1]
+        stockSearchAmount = ts[2]
+        start = ts[3]
+        end = ts[4]
+        for validTicker in self.validTickers: # Loops through all valid tickers
+            if showStocks:
+                print(validTicker) # Shows what Stock the loops on
+            ticker = yf.Ticker(validTicker)
+            if start == None and end == None:
+                data = ticker.history(period=period, interval=interval)
             else:
-                validTickerString += self.validTickers[i] + " "
-        tickers = yf.Tickers(validTickerString)
-
-        hist = tickers.history(period=periodTime, progress=progressCheck)
-        for j in range(len(self.validTickers)):  # Loops through all Stocks in Yahoo Finance
-            histNew = hist[j]
-            rows = hist.values.tolist()
-            self.data[self.validTickers[j]] = rows
+                data = ticker.history(interval=interval, start=start, end=end)
+            self.data[validTicker] = {}
+            for od in order: # Loops through the order of the Stocks
+                for column in data.columns: # Goes through every column
+                    if column == od: # Checks if its in the correct order
+                        self.data[validTicker][column] = data[column].tolist() # Adds it to the dict
 
     def saveTrainingData(self): # Saves self.data to json5
         data = self.data
         with open("./TrainingData/stockData.json5", "w") as f: # Opens stockData.json5
-            json5Data = json5.loads(data)
-            json5.dump(json5Data, f)
+            json5.dump(data, f, indent=4)
+
+def createTrainingData(showProgress: bool=False):
+    tdc = trainingDataCollection()  # Redefines the class as tdc
+    if showProgress:
+        print("Creating list of tickers...")
+        tdc.compileTickers()
+        print("Checking if Stocks are valid...")
+        tdc.checkValidTickers(showStocks=True)
+        print("Compiling training data...")
+        tdc.compileTrainingData(showStocks=True)
+        print("Saving training data...")
+        tdc.saveTrainingData()
+        print("Training data saved!")
+    else:
+        tdc.compileTickers()
+        tdc.checkValidTickers()
+        tdc.compileTrainingData()
+        tdc.saveTrainingData()
+
 
 if __name__ == "__main__":
-    tdc = trainingDataCollection() # Redefines the class as tdc
-    tdc.compileTickers()
-    tdc.checkValidTickers(showStocks=True)
-    #tdc.compileTrainingData()
-    #tdc.saveTrainingData()
+    createTrainingData(showProgress=True)
