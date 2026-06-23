@@ -6,27 +6,60 @@ class trainingDataBatching: # Batches all training data into questions and answe
         self.tickers: list[str] = []
         self.stockParameters: list[str] = []
 
-    def loadStockData(self): # Loads training data
+        self.batches: list[list] = []
+
+        self.period = trainingSettings()[0]
+        self.interval = trainingSettings()[1]
+
+    def loadStockData(self, showProgress: bool = False): # Loads training data
         with open("./TrainingData/stockData.json5", "r") as f: # Opens stockData.json5 as a read only file
             self.stockData = json5.load(f)
         for key in self.stockData.keys(): # Lists all Stocks in training data
+            if showProgress:
+                print(key)
             self.tickers.append(key)
         for key in self.stockData[self.tickers[0]].keys(): # Lists all parameters in training data
             self.stockParameters.append(key)
 
-    def createBatch(self):
-        pass
+    def createBatches(self, showProgress: bool = False): # Creates batches
+        if self.period == "1y" and self.interval == "1d":
+            for ticker in self.tickers: # Loops through all tickers
+                currentBatch = [[], []]
+                for parameter in self.stockParameters: # Loops through all parameters
+                    if parameter == "PercentIncrease":
+                        currentBatch[1].append(self.stockData[ticker]["PercentIncrease"][-1]) # Saves the answer
+                    currentParameterVals = self.stockData[ticker][parameter][:-1]
+                    if showProgress:
+                        print(ticker, parameter, len(currentParameterVals))
+                    currentBatch[0].append(currentParameterVals) # Saves the question
+                self.batches.append(currentBatch)
+                if showProgress:
+                    print(currentBatch)
+        else:
+            print("==============================")
+            print("In trainingDataSettings.json5")
+            print("period should be '1y'")
+            print("interval should be '1d'")
+            print("==============================")
 
-def batchTrainingData(showProgress: bool = False):
+        if showProgress:
+            print(self.stockParameters)
+
+def batchTrainingData(showProgress: bool = False, createTrainingData: bool = True):
     if showProgress:
-        createTrainingData(showProgress=showProgress)
+        if createTrainingData:
+            createTrainingData(showProgress=showProgress)
         print("Loading training data...")
         tdb = trainingDataBatching()
-        tdb.loadStockData()
+        tdb.loadStockData(showProgress=showProgress)
+        print("Creating batches...")
+        tdb.createBatches(showProgress=showProgress)
     else:
-        createTrainingData(showProgress=showProgress)
+        if createTrainingData:
+            createTrainingData(showProgress=showProgress)
         tdb = trainingDataBatching()
-        tdb.loadStockData()
+        tdb.loadStockData(showProgress=showProgress)
+        tdb.createBatches(showProgress=showProgress)
 
 if __name__ == "__main__":
-    batchTrainingData(showProgress=True)
+    batchTrainingData(showProgress=True, createTrainingData=True)

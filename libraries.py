@@ -12,7 +12,7 @@ import numpy as np # For manipulating data
 import pandas as pd # For manipulating data
 import matplotlib.pyplot as plt # For data visualisation
 
-from trainingDataCollection import createTrainingData # For creating data
+from trainingDataCollection import createTrainingData, trainingSettings # For creating data and reading settings
 
 if __name__ == "__main__":
     print(f"sys version: {sys.version}")
