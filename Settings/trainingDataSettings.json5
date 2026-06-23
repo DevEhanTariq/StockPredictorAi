@@ -1,9 +1,9 @@
 {
-  "period": "1d", // All possible values -> ["1d", "5d", "1mo", "3mo", "6mo", "1y", "2y", "5y", "10y", "ytd", "max"]
-  "interval": "1d", // All possible values -> ["1m", "2m", "5m", "15m", "30m", "60m", "90m", "1h", "1d", "5d", "1wk", "1mo", "3mo"]
+  "period": "1y", // All possible values -> ["1d", "5d", "1mo", "3mo", "6mo", "1y", "2y", "5y", "10y", "ytd", "max"]
+  "interval": "1d", // All possible values -> ["1d", "5d", "1wk", "1mo", "3mo"]
   "start": null, // Inclusive; If this is empty (null), it will be ignored and "period" will be used instead; example input -> "2024-01-01", "yyyy-mm-dd"
   "end": null, // Exclusive; If this is empty (null), it will be ignored and "period" will be used instead example input -> "2025-01-01", "yyyy-mm-dd"
-  "stockSearchAmount": 10, // How many Stocks are looked through
+  "stockSearchAmount": 0, // How many Stocks are looked through
   "permanentStock": [
     "AAPL","MSFT","NVDA","GOOGL","AMZN","META","BRK-B","JPM","XOM","LLY",
     "AVGO","WMT","V","MA","COST","PG","JNJ","HD","BAC","ABBV",

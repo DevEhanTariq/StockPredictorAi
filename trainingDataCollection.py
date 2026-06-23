@@ -59,10 +59,22 @@ class trainingDataCollection:
             else:
                 data = ticker.history(interval=interval, start=start, end=end)
             self.data[validTicker] = {}
+            open = []
+            close = []
             for od in order: # Loops through the order of the Stocks
                 for column in data.columns: # Goes through every column
                     if column == od: # Checks if its in the correct order
                         self.data[validTicker][column] = data[column].tolist() # Adds it to the dict
+                        if od == "Open":
+                            open.append(data[column].tolist())
+                        elif od == "Close":
+                            close.append(data[column].tolist())
+            percenteIncrease = []
+            for i in range(len(open)):
+                for j in range(len(open[i])):
+                    percent = float(close[i][j]) / float(open[i][j])
+                    percenteIncrease.append(percent)
+            self.data[validTicker]["PercentIncrease"] = percenteIncrease
 
     def saveTrainingData(self): # Saves self.data to json5
         data = self.data
